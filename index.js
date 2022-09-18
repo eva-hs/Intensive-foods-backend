@@ -1,4 +1,5 @@
 const logger = require("./middleware/logger");
+const users = require("./routes/users");
 const foods = require("./routes/foods");
 const categories = require("./routes/categories");
 const mongoose = require("mongoose");
@@ -10,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(logger);
+app.use("/api/users", users);
 app.use("/api/categories", categories);
 app.use("/api/foods", foods);
 
