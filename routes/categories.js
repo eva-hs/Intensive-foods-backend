@@ -1,21 +1,14 @@
 const express = require("express");
+const { Category } = require("../models/Category");
 const router = express.Router();
 
-// Tagit in min fakeCategory array
-const categories = [
-  { _id: "5b21ca3eeb7f6fbccd471818", name: "Fruit" },
-  { _id: "5b21ca3eeb7f6fbccd471814", name: "Snacks" },
-  { _id: "5b21ca3eeb7f6fbccd471820", name: "Vegetables" },
-];
-
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
+  const categories = await Category.find();
   return res.send(categories);
 });
 
-router.get("/:id", (req, res) => {
-  const category = categories.find(
-    (category) => category._id === req.params.id
-  );
+router.get("/:id", async (req, res) => {
+  const category = await Category.findById(req.params.id);
 
   if (!category)
     return res
@@ -26,4 +19,3 @@ router.get("/:id", (req, res) => {
 });
 
 module.exports = router;
-exports.categories = categories;

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
 const { categorySchema } = require("./Category");
 
 const foodSchema = mongoose.Schema({
@@ -10,4 +11,20 @@ const foodSchema = mongoose.Schema({
 
 const Food = mongoose.model("Food", foodSchema);
 
-exports.Food = Food;
+function validateFood(food) {
+  const schema = Joi.object({
+    name: Joi.string().required().label("Name"),
+    categoryId: Joi.string().required().label("Category"),
+    numberInStock: Joi.number()
+      .required()
+      .min(0)
+      .max(100)
+      .label("Number in stock"),
+    price: Joi.number().required().min(0).max(10).label("Price"),
+    _id: Joi.string().allow(""),
+  });
+  return schema.validate(food);
+}
+
+module.exports.Food = Food;
+module.exports.validate = validateFood;
