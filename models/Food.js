@@ -26,5 +26,7 @@ function validateFood(food) {
   return schema.validate(food);
 }
 
-module.exports.Food = Food;
-module.exports.validate = validateFood;
+module.exports = {
+  Food,
+  validate: validateFood,
+};
