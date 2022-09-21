@@ -1,5 +1,7 @@
 const { Category } = require("../models/Category");
 const { Food, validate } = require("../models/Food");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 const express = require("express");
 const router = express.Router();
 
@@ -18,7 +20,7 @@ router.get("/:id", async (req, res) => {
   return res.send(food);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", [auth, admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
 
@@ -40,10 +42,10 @@ router.post("/", async (req, res) => {
   return res.send(food);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", [auth, admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
-
+  console.log(req.body);
   const food = await Food.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
@@ -56,7 +58,7 @@ router.put("/:id", async (req, res) => {
   return res.send(food);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", [auth, admin], async (req, res) => {
   const food = await Food.findByIdAndDelete(req.params.id);
 
   if (!food)
