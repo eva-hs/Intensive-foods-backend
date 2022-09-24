@@ -45,9 +45,18 @@ router.post("/", [auth, admin], async (req, res) => {
 router.put("/:id", [auth, admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
-  console.log(req.body);
-  const food = await Food.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
+
+  const category = await Category.findById(req.body.categoryId);
+  if (!category)
+    return res
+      .status(404)
+      .send("The category with the given id was not found.");
+
+  const food = await Food.findByIdAndUpdate(req.params.id, {
+    name: req.body.name,
+    category: category,
+    numberInStock: req.body.numberInStock,
+    price: req.body.price,
   });
 
   if (!food)
