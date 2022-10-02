@@ -39,12 +39,18 @@ router.post("/", [auth, admin], async (req, res) => {
 
   await food.save();
 
-  return res.send(food);
+  return res.status(201).send(food);
 });
 
 router.put("/:id", [auth, admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
+
+  const food = await Food.findByIdAndUpdate(req.params.id);
+  if (!food)
+    return res
+      .status(404)
+      .send("The food with the given status id was not found");
 
   const category = await Category.findById(req.body.categoryId);
   if (!category)
@@ -52,17 +58,12 @@ router.put("/:id", [auth, admin], async (req, res) => {
       .status(404)
       .send("The category with the given id was not found.");
 
-  const food = await Food.findByIdAndUpdate(req.params.id, {
-    name: req.body.name,
-    category: category,
-    numberInStock: req.body.numberInStock,
-    price: req.body.price,
-  });
+  food.name = req.body.name;
+  food.category = category;
+  food.numberInStock = req.body.numberInStock;
+  food.price = req.body.price;
 
-  if (!food)
-    return res
-      .status(404)
-      .send("The food with the given status id was not found");
+  food.save();
 
   return res.send(food);
 });
